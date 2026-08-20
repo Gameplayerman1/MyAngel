@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html class="dark" lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>AI MIEI OCCHI</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@300;400;500;600&family=Literata:wght@400&display=swap" rel="stylesheet"/>
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            background: "#131412",
+            surface: "#131412",
+            surfaceLow: "#0e0e0d",
+            surfaceHigh: "#2a2a28",
+            primary: "#cbc5c8",
+            secondary: "#debfc2",
+            tertiary: "#e9c349",
+            outline: "#958f93",
+            outlineVariant: "#4a4549",
+            onSurface: "#e4e2de"
+          },
+
+          fontFamily: {
+            display: ["Playfair Display", "serif"],
+            note: ["Literata", "serif"],
+            body: ["Montserrat", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg: #0D0B0D;
+      --text: #e4e2de;
+      --muted: #958f93;
+      --soft: #debfc2;
+      --gold: #e9c349;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+    }
+
+    .scene {
+      min-height: 100svh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+    }
+
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(38px);
+      transition:
+        opacity 1.15s cubic-bezier(.2,0,0,1),
+        transform 1.15s cubic-bezier(.2,0,0,1);
+    }
+
+    .fade-in-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger-1 { transition-delay: .25s; }
+    .stagger-2 { transition-delay: .50s; }
+    .stagger-3 { transition-delay: .75s; }
+    .stagger-4 { transition-delay: 1.00s; }
+    .stagger-5 { transition-delay: 1.25s; }
+    .stagger-6 { transition-delay: 1.50s; }
+
+    .serif-note {
+      font-family: 'Literata', serif;
+      font-size: clamp(17px, 2.3vw, 20px);
+      line-height: 1.7;
+    }
+
+    .body-copy {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.85;
+      font-weight: 300;
+      letter-spacing: .015em;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      line-height: 1;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      background: transparent;
+      transition: all .4s cubic-bezier(.2,0,0,1);
+    }
+
+    .ghost-btn:hover {
+      background: rgba(233,195,73,.08);
+      transform: translateY(-2px);
+    }
+
+    .ghost-btn:active {
+      transform: translateY(0);
+    }
+
+    #progress-bar {
+      position: fixed;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: 40vh;
+      background: rgba(203,197,200,.16);
+      z-index: 50;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    #progress-fill {
+      width: 100%;
+      height: 0%;
+      background: var(--gold);
+      transition: height .25s ease;
+    }
+
+    .photo {
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .PHOTO_FACE {
+      background-image:
+        linear-gradient(to bottom, rgba(13,11,13,.08), rgba(13,11,13,.18)),
+        url('https://lh3.googleusercontent.com/aida-public/AB6AXuA1NZ-qJS377TcGp6wV0ZGozqoPx6HAKgFYX8w9b3-Ksq9ZID2Za3llIvY4FemBNchAxLSgWY6-NCm4LBrysqQmu_eF6vbfzft_SbxbB-48BJgAS8uwzl59bqYpvHFwG4gjLNbOGgBrZa9it833cEBfhbi1HdSEudQAYPeQ6eM7EtRXe-dN8r1dajadfX11t1qmdcUut4eG8HoqJ5kK5tSWGC4C4UMvMGwNmz--fKqgAYoX6BmLoWK4');
+    }
+
+    .PHOTO_VIDEO_CALL {
+      background-image:
+        linear-gradient(to bottom, rgba(13,11,13,.04), rgba(13,11,13,.20)),
+        url('https://lh3.googleusercontent.com/aida-public/AB6AXuCsOr73djDlmBgSLLoktWht3ZX8eWCVfSG6s_CjOhFvt0__0bhDLjTFqAmafUTo27nHhWH3LGIUqOJQt6SEOQDwgzP0NP3_pHU7c1qiuw72Q7PyXcsk45nRgAPXXAVMPCrDATqyjttUROlGMA1x1Gi51kO3Wq5rWxav2c0_oufuBo6u83qWMWidt_nKFOYbGF-HDN7iI_-xcKSfWoFTy7rb9CKNc99x4-U8Lr3wKWjN6spvs4SORk7Y');
+    }
+
+    .PHOTO_BODY {
+      background:
+        radial-gradient(circle at center, rgba(222,191,194,.10), transparent 55%),
+        linear-gradient(145deg, #24221f, #11100f);
+    }
+
+    .PHOTO_INTERIOR {
+      background:
+        linear-gradient(180deg, rgba(13,11,13,.05), rgba(13,11,13,.75)),
+        radial-gradient(circle at 60% 45%, rgba(233,195,73,.16), transparent 35%),
+        linear-gradient(135deg, #25211f, #100f10 65%);
+    }
+
+    .PHOTO_OSAKA {
+      background:
+        linear-gradient(180deg, rgba(13,11,13,.18), rgba(13,11,13,.55)),
+        radial-gradient(circle at 20% 20%, rgba(222,191,194,.24), transparent 22%),
+        linear-gradient(160deg, #34252f, #17131a 55%, #0d0b0d);
+    }
+
+    .soft-glow {
+      box-shadow: 0 0 80px rgba(233,195,73,.08);
+    }
+
+    .blur-image {
+      filter: blur(10px);
+      transform: scale(1.04);
+      transition:
+        filter 1.1s ease,
+        transform 1.1s ease;
+    }
+
+    .blur-image:hover {
+      filter: blur(0);
+      transform: scale(1);
+    }
+
+    #sakura-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .petal {
+      position: absolute;
+      width: 8px;
+      height: 12px;
+      border-radius: 120% 0 120% 0;
+      background: #ffb4ab;
+      opacity: .55;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-20px) rotate(0deg) translateX(0);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: .6;
+      }
+
+      90% {
+        opacity: .6;
+      }
+
+      100% {
+        transform: translateY(110vh) rotate(320deg) translateX(60px);
+        opacity: 0;
+      }
+    }
+
+    .quote-line {
+      max-width: 760px;
+      margin-inline: auto;
+    }
+
+    .giant-word {
+      font-family: 'Playfair Display', serif;
+      letter-spacing: .08em;
+      line-height: .95;
+    }
+
+    @media (max-width: 640px) {
+      #progress-bar {
+        right: 6px;
+      }
+
+      .scene {
+        padding-inline: 22px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+
+      .fade-in-up {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="progress-bar">
+    <div id="progress-fill"></div>
+  </div>
+
+  <!-- BACKGROUND -->
+  <div class="fixed inset-0 pointer-events-none z-[-1] opacity-60">
+    <canvas id="shader-canvas" class="w-full h-full"></canvas>
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 01 — OPENING -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+    <div class="content max-w-3xl">
+      <h1 class="text-[38px] md:text-[58px] leading-[1.08] mb-8 fade-in-up">
+        E se per un attimo<br/>
+        potessi vederti<br/>
+        come ti vedo io?
+      </h1>
+
+      <p class="serif-note text-[#958f93] mb-12 fade-in-up stagger-1">
+        Questa volta niente specchi.
+      </p>
+
+      <button
+        class="ghost-btn px-8 py-4 rounded-full eyebrow fade-in-up stagger-2"
+        onclick="window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })">
+        Guardati con i miei occhi 🤍
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 02 — VIDEOCHIAMATA -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+    <div class="content max-w-3xl">
+
+      <p class="serif-note mb-5 fade-in-up">
+        Ieri mi hai detto…
+      </p>
+
+      <p class="serif-note mb-2 fade-in-up stagger-1">
+        “Tu mi vedi non specchiata…”
+      </p>
+
+      <p class="serif-note mb-10 fade-in-up stagger-2">
+        “Quindi con la bocca così 😭😭”
+      </p>
+
+      <div class="relative w-full aspect-video rounded-2xl overflow-hidden soft-glow fade-in-up stagger-3">
+        <div class="photo PHOTO_VIDEO_CALL blur-image absolute inset-0"></div>
+      </div>
+
+      <p class="body-copy quote-line mt-10 text-[#ccc4c9] fade-in-up stagger-4">
+        E quella cosa mi ha fatto pensare a quanto sia diversa
+        la versione di te che guardi tu da quella che conosco io.
+      </p>
+
+      <p class="serif-note mt-7 text-[#debfc2] fade-in-up stagger-5">
+        Perché io ormai noto cose che probabilmente tu non guardi nemmeno più.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 03 — IL VISO -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+    <div class="content max-w-2xl">
+
+      <p class="serif-note mb-8 fade-in-up">
+        Ci sono dettagli del tuo viso che ormai riconoscerei senza pensarci.
+      </p>
+
+      <p class="body-copy mb-5 fade-in-up stagger-1">
+        Una certa espressione.
+      </p>
+
+      <p class="body-copy mb-5 fade-in-up stagger-2">
+        Il modo in cui ti cambia lo sguardo.
+      </p>
+
+      <p class="body-copy mb-8 fade-in-up stagger-3">
+        Quella faccia che fai quando stai per ridere.
+      </p>
+
+      <p class="serif-note text-[#e9c349] fade-in-up stagger-4">
+        Credo di aver imparato a leggerti molto più di quanto pensi.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 04 — GLI OCCHI -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+      <div class="w-[420px] h-[420px] rounded-full border border-[#e9c349]"></div>
+    </div>
+
+    <div class="content max-w-2xl">
+
+      <p class="body-copy mb-8 fade-in-up">
+        A volte capisco come stai prima ancora che tu me lo dica.
+      </p>
+
+      <p class="serif-note text-[#debfc2] mb-8 fade-in-up stagger-1">
+        Ci sono giorni in cui basta guardarti per capire se sei serena,
+        stanca, pensierosa o felice.
+      </p>
+
+      <p class="text-[42px] md:text-[68px] giant-word text-[#e9c349] fade-in-up stagger-2">
+        I TUOI OCCHI
+      </p>
+
+      <p class="body-copy mt-8 text-[#958f93] fade-in-up stagger-3">
+        Forse è per questo che sono la prima cosa che cerco.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 05 — QUANDO NON SAI CHE TI GUARDO -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="content max-w-md">
+
+      <h2 class="text-[34px] md:text-[50px] leading-[1.1] mb-10 fade-in-up">
+        La cosa che preferisco è quando non sai che ti sto guardando.
+      </h2>
+
+      <div class="w-full aspect-square rounded-full overflow-hidden soft-glow mb-10 fade-in-up stagger-1">
+        <div class="photo PHOTO_FACE w-full h-full"></div>
+      </div>
+
+      <p class="body-copy mb-5 fade-in-up stagger-2">
+        Quando sei concentrata.
+      </p>
+
+      <p class="body-copy mb-5 fade-in-up stagger-3">
+        Quando ridi senza pensarci.
+      </p>
+
+      <p class="body-copy mb-8 fade-in-up stagger-4">
+        Quando fai qualcosa e non stai cercando di essere bella.
+      </p>
+
+      <p class="serif-note text-[#e9c349] fade-in-up stagger-5">
+        È lì che mi viene più naturale pensare: eccola.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 06 — IL CORPO -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="absolute inset-0 PHOTO_BODY opacity-60"></div>
+
+    <div class="absolute inset-0 bg-black/25"></div>
+
+    <div class="content max-w-2xl">
+
+      <p class="serif-note mb-8 fade-in-up">
+        Probabilmente ci sono dettagli di te che cambieresti.
+      </p>
+
+      <h2 class="text-[42px] md:text-[60px] leading-tight mb-10 fade-in-up stagger-1">
+        Io invece<br/>
+        ormai li riconoscerei tra cento.
+      </h2>
+
+      <p class="body-copy max-w-xl mx-auto text-[#ccc4c9] fade-in-up stagger-2">
+        Il tuo corpo per me non è un insieme di cose da giudicare.
+        È semplicemente il corpo della persona che desidero.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 07 — LA PARTE GIOIOSA -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="absolute inset-0 PHOTO_INTERIOR opacity-35"></div>
+
+    <div class="content max-w-2xl">
+
+      <p class="serif-note mb-8 fade-in-up">
+        Credo che alcune persone abbiano conosciuto solo una parte di te.
+      </p>
+
+      <p class="body-copy mb-8 fade-in-up stagger-1">
+        Io invece conosco quella che ride, che scherza,
+        che si entusiasma, che quando sta bene sembra quasi un'altra persona.
+      </p>
+
+      <h2 class="text-[36px] md:text-[52px] leading-tight text-[#debfc2] fade-in-up stagger-2">
+        Ed è una delle parti di te
+        che amo di più.
+      </h2>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 08 — CASA -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="absolute inset-0 PHOTO_INTERIOR opacity-55"></div>
+
+    <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/35 to-black/70"></div>
+
+    <div class="content max-w-2xl">
+
+      <p class="body-copy mb-8 fade-in-up">
+        Ci sono persone con cui stai bene.
+      </p>
+
+      <p class="text-[38px] md:text-[58px] leading-tight mb-10 fade-in-up stagger-1">
+        E poi ci sono persone
+        con cui smetti di sentire
+        il bisogno di essere da qualche altra parte.
+      </p>
+
+      <p class="serif-note text-[#e9c349] fade-in-up stagger-2">
+        Con te per me è così.
+      </p>
+
+      <p class="body-copy mt-10 text-[#debfc2] fade-in-up stagger-3">
+        Una coperta.
+        Una cioccolata calda.
+        La pioggia fuori.
+        E nessun posto in cui vorrei essere.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 09 — OSAKA -->
+  <!-- ========================================================= -->
+
+  <section class="scene" id="scene-osaka">
+
+    <div class="absolute inset-0 PHOTO_OSAKA"></div>
+
+    <div id="sakura-container"></div>
+
+    <div class="content max-w-2xl">
+
+      <p class="serif-note mb-8 fade-in-up">
+        Se fossi un luogo, ti vedrei così.
+      </p>
+
+      <h2 class="text-[48px] md:text-[72px] leading-none mb-8 fade-in-up stagger-1">
+        Osaka.
+      </h2>
+
+      <p class="body-copy mb-4 fade-in-up stagger-2">
+        Nel periodo della fioritura.
+      </p>
+
+      <p class="body-copy mb-4 fade-in-up stagger-3 text-[#debfc2]">
+        Piena di colore.
+      </p>
+
+      <p class="body-copy mb-4 fade-in-up stagger-4">
+        Bellissima senza aver bisogno di cercare di esserlo.
+      </p>
+
+      <p class="body-copy mb-4 fade-in-up stagger-5">
+        Delicata.
+      </p>
+
+      <p class="body-copy mb-8 fade-in-up stagger-6">
+        Ma mai fragile.
+      </p>
+
+      <p class="serif-note text-[#e9c349] fade-in-up stagger-6">
+        Con qualcosa di dolce che convive con qualcosa di incredibilmente forte.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 10 — FORZA -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="content max-w-2xl">
+
+      <p class="serif-note mb-8 fade-in-up text-[#958f93]">
+        La cosa che mi sorprende di te è che la tua forza non fa rumore.
+      </p>
+
+      <h2 class="text-[44px] md:text-[64px] leading-tight mb-10 fade-in-up stagger-1">
+        Si vede quando serve.
+      </h2>
+
+      <p class="body-copy mb-5 fade-in-up stagger-2">
+        Quando avresti mille motivi per fermarti.
+      </p>
+
+      <p class="body-copy mb-5 fade-in-up stagger-3">
+        Quando devi scegliere anche se scegliere fa male.
+      </p>
+
+      <p class="body-copy mb-10 fade-in-up stagger-4">
+        Quando trovi comunque il modo di andare avanti.
+      </p>
+
+      <p class="serif-note text-[#e9c349] fade-in-up stagger-5">
+        È una parte di te che non tutti notano.
+      </p>
+
+      <p class="serif-note text-[#debfc2] mt-5 fade-in-up stagger-6">
+        Io sì.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 11 — QUANDO SALVI ME -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="content max-w-2xl">
+
+      <p class="serif-note mb-8 fade-in-up">
+        E poi c'è una cosa che forse non consideri nemmeno così importante.
+      </p>
+
+      <h2 class="text-[38px] md:text-[56px] leading-tight mb-10 fade-in-up stagger-1">
+        Tu riesci a cambiare
+        il modo in cui mi sento.
+      </h2>
+
+      <p class="body-copy mb-5 fade-in-up stagger-2">
+        Ci sono giornate che mi sembrano enormi
+        finché non parlo con te.
+      </p>
+
+      <p class="body-copy mb-8 fade-in-up stagger-3">
+        A volte non risolvi niente.
+      </p>
+
+      <p class="serif-note text-[#e9c349] fade-in-up stagger-4">
+        Mi fai semplicemente sentire meno solo dentro quella giornata.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 12 — DESIDERIO -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="content max-w-2xl">
+
+      <p class="text-[52px] md:text-[100px] giant-word text-[#debfc2] mb-12 fade-in-up">
+        DESIDERIO
+      </p>
+
+      <p class="body-copy mb-6 fade-in-up stagger-1">
+        È il modo in cui mi fai sentire uomo.
+      </p>
+
+      <p class="body-copy mb-6 fade-in-up stagger-2">
+        Il modo in cui ti guardo.
+      </p>
+
+      <p class="body-copy mb-6 fade-in-up stagger-3">
+        Il modo in cui mi viene naturale avvicinarmi a te.
+      </p>
+
+      <p class="body-copy max-w-xl mx-auto mb-8 fade-in-up stagger-4">
+        Quello che provo per te non è soltanto qualcosa che vedo.
+      </p>
+
+      <p class="serif-note text-[#e9c349] fade-in-up stagger-5">
+        È qualcosa che sento.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 13 — CONFESSIONE -->
+  <!-- ========================================================= -->
+
+  <section class="scene bg-black">
+
+    <div class="content max-w-2xl">
+
+      <p class="serif-note text-[#958f93] mb-10 fade-in-up">
+        C'è una cosa che probabilmente non sai.
+      </p>
+
+      <h2 class="text-[38px] md:text-[58px] leading-tight mb-10 fade-in-up stagger-1">
+        A volte penso a quanto sei bella
+        proprio nei momenti in cui
+        tu non stai pensando minimamente
+        alla tua bellezza.
+      </h2>
+
+      <p class="body-copy text-[#debfc2] fade-in-up stagger-2">
+        E credo sia questa la versione di te
+        che amo guardare di più.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 14 — SINTESI -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="content max-w-2xl">
+
+      <p class="body-copy mb-10 fade-in-up">
+        Forse il punto è che tu,
+        quando ti guardi,
+        cerchi quello che non va.
+      </p>
+
+      <p class="text-[46px] md:text-[68px] leading-tight mb-10 fade-in-up stagger-1">
+        Io quando ti guardo
+        cerco te.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- SCENE 15 — FINALE -->
+  <!-- ========================================================= -->
+
+  <section class="scene">
+
+    <div class="content max-w-2xl">
+
+      <p class="serif-note text-[#958f93] mb-10 fade-in-up">
+        Non so se dopo tutto questo
+        riuscirai davvero a vederti come ti vedo io.
+      </p>
+
+      <p class="body-copy mb-10 fade-in-up stagger-1">
+        Ma almeno adesso sai cosa succede quando ti guardo.
+      </p>
+
+      <p class="text-[34px] md:text-[50px] leading-tight mb-7 fade-in-up stagger-2">
+        Non sto cercando qualcosa da aggiustare.
+      </p>
+
+      <p class="text-[38px] md:text-[58px] leading-tight text-[#debfc2] mb-12 fade-in-up stagger-3">
+        Sto semplicemente guardando
+        la ragazza che amo.
+      </p>
+
+      <p class="serif-note text-[#e9c349] mb-5 fade-in-up stagger-4">
+        E ai miei occhi…
+      </p>
+
+      <h2 class="text-[34px] md:text-[52px] leading-tight fade-in-up stagger-5">
+        sei la donna più bella del mondo. 🤍
+      </h2>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- FINAL SCREEN -->
+  <!-- ========================================================= -->
+
+  <section class="scene pb-32">
+
+    <div class="content max-w-md">
+
+      <div class="w-full aspect-[3/4] rounded-3xl overflow-hidden mb-12 soft-glow fade-in-up">
+        <div class="photo PHOTO_FACE w-full h-full"></div>
+      </div>
+
+      <p class="body-copy mb-8 fade-in-up stagger-1">
+        Non so se riuscirò mai a spiegarti
+        esattamente come ti vedo.
+      </p>
+
+      <p class="text-[34px] md:text-[48px] leading-tight mb-8 fade-in-up stagger-2">
+        Però ci ho provato.
+      </p>
+
+      <p class="serif-note text-[#debfc2] mb-12 fade-in-up stagger-3">
+        Con amore,<br/>
+        io. 🤍
+      </p>
+
+      <button
+        class="ghost-btn px-8 py-4 rounded-full eyebrow fade-in-up stagger-4"
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+        Ricomincia
+      </button>
+
+    </div>
+  </section>
+
+
+  <script>
+    /* =========================================================
+       SHADER BACKGROUND
+       ========================================================= */
+
+    (function () {
+      const canvas = document.getElementById("shader-canvas");
+      const gl = canvas.getContext("webgl");
+
+      if (!gl) return;
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
+
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+
+      resize();
+      window.addEventListener("resize", resize);
+
+      const vertexShaderSource = `
+        attribute vec2 a_position;
+
+        void main() {
+          gl_Position = vec4(a_position, 0.0, 1.0);
+        }
+      `;
+
+      const fragmentShaderSource = `
+        precision highp float;
+
+        uniform float u_time;
+        uniform vec2 u_resolution;
+
+        float random(vec2 st) {
+          return fract(
+            sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123
+          );
+        }
+
+        void main() {
+
+          vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+
+          vec3 c1 = vec3(0.035, 0.028, 0.035);
+          vec3 c2 = vec3(0.050, 0.060, 0.090);
+          vec3 c3 = vec3(0.080, 0.060, 0.075);
+
+          float wave = sin(
+            uv.y * 3.2 +
+            u_time * 0.08 +
+            sin(uv.x * 4.0 + u_time * 0.06) * 0.4
+          );
+
+          vec3 color = mix(c1, c2, uv.y);
+          color = mix(color, c3, smoothstep(-1.0, 1.0, wave) * 0.18);
+
+          float grain = random(uv + u_time * 0.01);
+
+          color += grain * 0.012;
+
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `;
+
+      function createShader(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
+      }
+
+      const vertexShader = createShader(
+        gl.VERTEX_SHADER,
+        vertexShaderSource
+      );
+
+      const fragmentShader = createShader(
+        gl.FRAGMENT_SHADER,
+        fragmentShaderSource
+      );
+
+      const program = gl.createProgram();
+
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+
+      gl.linkProgram(program);
+      gl.useProgram(program);
+
+      const positionBuffer = gl.createBuffer();
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array([
+          -1,-1,
+           1,-1,
+          -1, 1,
+           1, 1
+        ]),
+        gl.STATIC_DRAW
+      );
+
+      const positionLocation =
+        gl.getAttribLocation(program, "a_position");
+
+      gl.enableVertexAttribArray(positionLocation);
+
+      gl.vertexAttribPointer(
+        positionLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
+
+      const timeLocation =
+        gl.getUniformLocation(program, "u_time");
+
+      const resolutionLocation =
+        gl.getUniformLocation(program, "u_resolution");
+
+      function render(time) {
+
+        gl.uniform1f(
+          timeLocation,
+          time * 0.001
+        );
+
+        gl.uniform2f(
+          resolutionLocation,
+          canvas.width,
+          canvas.height
+        );
+
+        gl.drawArrays(
+          gl.TRIANGLE_STRIP,
+          0,
+          4
+        );
+
+        requestAnimationFrame(render);
+      }
+
+      requestAnimationFrame(render);
+    })();
+
+
+    /* =========================================================
+       FADE IN ON SCROLL
+       ========================================================= */
+
+    const observer =
+      new IntersectionObserver(
+        entries => {
+
+          entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+
+          });
+
+        },
+        {
+          threshold: 0.12
+        }
+      );
+
+    document
+      .querySelectorAll(".fade-in-up")
+      .forEach(element => observer.observe(element));
+
+
+    /* =========================================================
+       PROGRESS BAR
+       ========================================================= */
+
+    window.addEventListener("scroll", () => {
+
+      const scrollTop =
+        document.documentElement.scrollTop ||
+        document.body.scrollTop;
+
+      const scrollHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+
+      const percentage =
+        scrollHeight > 0
+          ? (scrollTop / scrollHeight) * 100
+          : 0;
+
+      document.getElementById("progress-fill")
+        .style.height = percentage + "%";
+
+    });
+
+
+    /* =========================================================
+       SAKURA
+       ========================================================= */
+
+    const sakuraContainer =
+      document.getElementById("sakura-container");
+
+    const osakaScene =
+      document.getElementById("scene-osaka");
+
+    let sakuraInterval = null;
+
+    function createSakura() {
+
+      if (!sakuraContainer) return;
+
+      const petal =
+        document.createElement("div");
+
+      petal.className = "petal";
+
+      const size =
+        Math.random() * 8 + 5;
+
+      petal.style.width =
+        size + "px";
+
+      petal.style.height =
+        (size * 1.35) + "px";
+
+      petal.style.left =
+        Math.random() * 100 + "%";
+
+      const duration =
+        Math.random() * 5 + 5;
+
+      petal.style.animationDuration =
+        duration + "s";
+
+      petal.style.animationDelay =
+        (Math.random() * 1.5) + "s";
+
+      sakuraContainer.appendChild(petal);
+
+      setTimeout(() => {
+        petal.remove();
+      }, (duration + 2) * 1000);
+    }
+
+    if (osakaScene) {
+
+      const osakaObserver =
+        new IntersectionObserver(
+          entries => {
+
+            entries.forEach(entry => {
+
+              if (entry.isIntersecting) {
+
+                if (!sakuraInterval) {
+                  sakuraInterval =
+                    setInterval(createSakura, 240);
+                }
+
+              } else {
+
+                clearInterval(sakuraInterval);
+                sakuraInterval = null;
+
+              }
+
+            });
+
+          },
+          {
+            threshold: 0.15
+          }
+        );
+
+      osakaObserver.observe(osakaScene);
+    }
+  </script>
+
+</body>
+</html>
